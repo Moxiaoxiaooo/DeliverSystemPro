@@ -1,5 +1,6 @@
 package com.LinYuda.www.service;
 
+import com.LinYuda.www.dao.order.OrderDao;
 import com.LinYuda.www.dao.productMenu.ProductMenuDao;
 import com.LinYuda.www.po.ProductMenu;
 
@@ -205,12 +206,17 @@ public class ProductMenuService {
 
     /**
      * 通过商品id删除商品
+     * 会删除order表中的数据和menu表中的数据
      *
      * @param menuId 要删除的商品id
      * @return 删除结果：成功为true，失败为false
      */
     public boolean deleteMenuByMenuId(long menuId) {
-        return new ProductMenuDao().deleteMenuByMenuId(menuId);
+        //先删除外键
+        boolean check2 = new OrderDao().deleteMenuFromOrderByMealId(menuId);
+        boolean check1 = new ProductMenuDao().deleteMenuByMenuId(menuId);
+
+        return check2 && check1;
     }
 
     /**

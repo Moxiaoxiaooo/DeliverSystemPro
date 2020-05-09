@@ -210,4 +210,31 @@ public class OrderDao {
 
 
     }
+
+
+    /**
+     * 通过id删除order表中的数据
+     *
+     * @param mealId 商品数据
+     * @return 删除结果
+     */
+    public boolean deleteMenuFromOrderByMealId(long mealId) {
+        boolean returnValue = false;
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        int rows = 0;
+        try {
+            connection = JDBCUtil.getConnection();
+            String sql = "delete from t_order where order_meal_no = ?";
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setLong(1, mealId);
+            rows = preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            JDBCUtil.closeConnection(connection, preparedStatement);
+        }
+        return (rows >= 0);
+    }
 }

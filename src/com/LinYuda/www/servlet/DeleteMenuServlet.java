@@ -1,5 +1,8 @@
 package com.LinYuda.www.servlet;
 
+import com.LinYuda.www.po.Cook;
+import com.LinYuda.www.po.ProductMenu;
+import com.LinYuda.www.service.CookService;
 import com.LinYuda.www.service.ProductMenuService;
 
 import javax.servlet.ServletException;
@@ -15,13 +18,17 @@ import java.io.IOException;
 @WebServlet(name = "DeleteMenuServlet", urlPatterns = "/DeleteMenuServlet")
 public class DeleteMenuServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Cook cook = (Cook) request.getSession().getAttribute("cook");
         String selectedMenuIdString = request.getParameter("selectedMenuId");
+        System.out.println(selectedMenuIdString);
         long selectedMenuId = Long.parseLong(selectedMenuIdString);
         ProductMenuService productMenuService = new ProductMenuService();
         if (selectedMenuIdString != null) {
             boolean result = productMenuService.deleteMenuByMenuId(selectedMenuId);
             if (result) {
                 //删除成功
+                ProductMenu[] productMenus = new CookService().getCookMenuByCookId(cook.getId());
+                request.getSession().setAttribute("cookMenus", productMenus);
                 response.sendRedirect("CookView/deleteMenuSuccess.jsp");
             } else {
                 //删除失败

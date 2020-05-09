@@ -1,6 +1,8 @@
 package com.LinYuda.www.servlet;
 
+import com.LinYuda.www.po.Cook;
 import com.LinYuda.www.po.ProductMenu;
+import com.LinYuda.www.service.CookService;
 import com.LinYuda.www.service.ProductMenuService;
 
 import javax.servlet.ServletException;
@@ -19,7 +21,7 @@ public class AddNewMenuServlet extends HttpServlet {
         response.setCharacterEncoding("utf-8");
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("utf-8");
-
+        Cook cook = (Cook) request.getSession().getAttribute("cook");
         String mealNameString = request.getParameter("mealName");
         String priceString = request.getParameter("price");
         String cookNoString = request.getParameter("cookNo");
@@ -40,6 +42,8 @@ public class AddNewMenuServlet extends HttpServlet {
             boolean result = productMenuService.addNewMenu(productMenu);
             if (result) {
                 //添加成功
+                ProductMenu[] productMenus = new CookService().getCookMenuByCookId(cook.getId());
+                request.getSession().setAttribute("cookMenus", productMenus);
                 response.sendRedirect("CookView/addMenuSuccess.jsp");
             } else {
                 //添加失败
